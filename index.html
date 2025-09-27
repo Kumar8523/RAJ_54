@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAJ_54 Research | Systematic Paper Aircraft Engineering Framework</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2d3748;
+            --accent: #3182ce;
+            --light: #f7fafc;
+            --dark: #1a202c;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --danger: #e53e3e;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+            z-index: 101;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 102;
+            transition: var(--transition);
+            padding: 80px 30px 30px;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        .sidebar-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .sidebar-links {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-links a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+
+        .sidebar-links a:hover {
+            color: var(--accent);
+            padding-left: 10px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 101;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(26, 54, 93, 0.9), rgba(26, 54, 93, 0.8)), url('https://images.unsplash.com/photo-1502134249126-9f3755a50d78?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: #2c5aa0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary);
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            color: var(--secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .card p {
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .features {
+            background: var(--light);
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 30px 20px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .feature-item h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .download-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .download-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .download-section p {
+            max-width: 700px;
+            margin: 0 auto 40px;
+            font-size: 1.1rem;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+        }
+
+        .team-section {
+            background: var(--light);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .team-member {
+            text-align: center;
+            background: white;
+            padding: 30px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .team-member img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 4px solid var(--accent);
+        }
+
+        .team-member h3 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .team-member p {
+            color: var(--secondary);
+            font-style: italic;
+        }
+
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #2d3748;
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .resource-item {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .resource-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .resource-icon {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-paper-plane"></i>
+                <span>RAJ_54 Research</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#about">About</a>
+                <a href="#framework">Framework</a>
+                <a href="#software">Software</a>
+                <a href="#resources">Resources</a>
+                <a href="#team">Team</a>
+                <a href="#download">Download</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar Menu -->
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-close" id="sidebarClose">
+            <i class="fas fa-times"></i>
+        </button>
+        <nav class="sidebar-links">
+            <a href="#about">About</a>
+            <a href="#framework">Framework</a>
+            <a href="#software">Software</a>
+            <a href="#resources">Resources</a>
+            <a href="#team">Team</a>
+            <a href="#download">Download</a>
+        </nav>
+    </div>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Systematic Low-Cost Engineering Framework for Paper Aircraft</h1>
+            <p>Transforming paper aircraft design from trial-and-error to systematic engineering with applications in micro-UAV development</p>
+            <a href="#download" class="btn">Download Research</a>
+            <a href="#framework" class="btn btn-secondary">Learn More</a>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>About the Research</h2>
+                <p>This research develops and validates a systematic, low-cost engineering framework for optimizing paper aircraft through computer vision flight tracking and iterative design methodology.</p>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="card-content">
+                        <h3>Problem Statement</h3>
+                        <p>Traditional paper aircraft design relies on inefficient trial-and-error approaches that limit aerodynamic understanding and provide no systematic pathway to micro-UAV engineering skills.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="card-content">
+                        <h3>Our Solution</h3>
+                        <p>By implementing the Lucidraft software for automated trajectory tracking, quantitative performance measurement, and enforced single-variable modification protocols.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="card-content">
+                        <h3>Key Contributions</h3>
+                        <p>Transforms subjective flight assessment into reproducible engineering data with demonstrated transferability to micro-UAV development applications.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="framework" class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Framework Components</h2>
+                <p>Our systematic approach combines engineering methodology with accessible technology</p>
+            </div>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                    <h3>Systematic Design</h3>
+                    <p>Single-variable modification protocol for clear cause-effect relationships</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Computer Vision Tracking</h3>
+                    <p>CSRT algorithm for automated trajectory analysis and performance metrics</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Quantitative Metrics</h3>
+                    <p>Distance, airtime, speed, trajectory, and stability scoring (0-10 scale)</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Data Management</h3>
+                    <p>Hierarchical storage with version control for all design iterations</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="software">
+        <div class="container">
+            <div class="section-title">
+                <h2>Lucidraft Software</h2>
+                <p>Our custom-developed software for implementing the systematic framework</p>
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <h3>Digital Engineering Notebook</h3>
+                    <p>Lucidraft serves as a digital engineering notebook with enhanced analytical capabilities, providing an organized folder structure with models/versions. Each version folder contains metadata, metrics, software-generated files, and other relevant information.</p>
+                    
+                    <h4>Key Features:</h4>
+                    <ul style="margin-left: 20px; margin-bottom: 20px;">
+                        <li>Automated flight tracking using CSRT algorithm</li>
+                        <li>Trajectory visualization and pattern recognition</li>
+                        <li>Performance metrics calculation and comparison</li>
+                        <li>Version control and iteration management</li>
+                        <li>Report generation and data export</li>
+                    </ul>
+                    
+                    <h4>Technical Requirements:</h4>
+                    <p>Standard computer capable of running Python applications with OpenCV support. No specialized hardware required beyond a basic webcam or smartphone for video recording.</p>
+                    
+                    <a href="https://github.com/samiulmuztaba/Lucidraft_Delta-X" class="btn" target="_blank">View on GitHub</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="resources">
+        <div class="container">
+            <div class="section-title">
+                <h2>Research Resources</h2>
+                <p>Access our complete research materials and documentation</p>
+            </div>
+            <div class="resources-grid">
+                <div class="resource-item">
+                    <div class="resource-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3>Research Paper</h3>
+                    <p>Complete research paper detailing the framework methodology, validation, and results.</p>
+                    <button class="btn" onclick="openDownloadModal()">Download PDF</button>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Software Repository</h3>
+                    <p>Complete source code for Lucidraft software with installation instructions.</p>
+                    <a href="https://github.com/samiulmuztaba/Lucidraft_Delta-X" class="btn" target="_blank">View Code</a>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Demo Video</h3>
+                    <p>Software demonstration showing the framework in action with real flight tests.</p>
+                    <a href="https://youtu.be/2WEe5R7OTTw" class="btn" target="_blank">Watch Video</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="team">
+        <div class="container">
+            <div class="section-title">
+                <h2>Research Team</h2>
+                <p>Meet the researchers behind this project</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Samiul Muztaba">
+                    <h3>Samiul Muztaba</h3>
+                    <p>Lead Researcher</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Nabo Kumar">
+                    <h3>Nabo Kumar Sarkar</h3>
+                    <p>Co-Researcher</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Ashfaque Ahmed Saud">
+                    <h3>Ashfaque Ahmed Saud</h3>
+                    <p>Co-Researcher</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Lam Ayat Sakib">
+                    <h3>Lam Ayat Sakib</h3>
+                    <p>Co-Researcher</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="download" class="download-section">
+        <div class="container">
+            <h2>Download Research Materials</h2>
+            <p>Complete the form below to access our research paper, software, and additional resources. Your information will be securely stored for research purposes.</p>
+            
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p>Submitting your information...</p>
+            </div>
+            
+            <div class="form-container" id="formContainer">
+                <form id="downloadForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="institution">Institution/Organization</label>
+                        <input type="text" id="institution" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="purpose">Purpose of Download</label>
+                        <select id="purpose" class="form-control" required>
+                            <option value="">Select a purpose</option>
+                            <option value="academic">Academic Research</option>
+                            <option value="education">Educational Use</option>
+                            <option value="personal">Personal Interest</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <input type="text" id="country" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comments">Additional Comments (Optional)</label>
+                        <textarea id="comments" class="form-control" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Submit & Download</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>RAJ_54 Research</h3>
+                    <p>Systematic Low-Cost Engineering Framework for Paper Aircraft with applications in micro-UAV development.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-researchgate"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#about">About the Research</a></li>
+                        <li><a href="#framework">Framework</a></li>
+                        <li><a href="#software">Software</a></li>
+                        <li><a href="#resources">Resources</a></li>
+                        <li><a href="#team">Team</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> research@raj54.edu</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Rajshahi University School and College</li>
+                        <li><i class="fas fa-globe"></i> https://github.com/samiulmuztaba</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 RAJ_54 Research Team. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="downloadModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeDownloadModal()">&times;</span>
+            <h2>Download Complete</h2>
+            <p>Thank you for your interest in our research. Your information has been recorded.</p>
+            <p>Your download should start automatically. If it doesn't, use the links below:</p>
+            <div style="margin-top: 20px;">
+                <a href="#" class="btn" style="margin-right: 10px;">Research Paper (PDF)</a>
+                <a href="https://github.com/samiulmuztaba/Lucidraft_Delta-X" class="btn" target="_blank">Software Repository</a>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+        // Sidebar functionality
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const overlay = document.getElementById('overlay');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        sidebarClose.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Close sidebar when clicking on a link
+        document.querySelectorAll('.sidebar-links a').forEach(link => {
+            link.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+        
+        // User session management
+        let userSession = {
+            isLoggedIn: false,
+            userData: null,
+            hasSubmittedInfo: false
+        };
+
+        // Check if user has already submitted information
+        function checkUserSubmission(email) {
+            const submissions = JSON.parse(localStorage.getItem('researchSubmissions') || '[]');
+            return submissions.some(submission => submission.email === email);
+        }
+
+        // Google Apps Script Web App URL (Replace with your actual URL)
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
+        // Form submission handling
+        document.getElementById('downloadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            
+            // Check if user has already submitted information
+            if (checkUserSubmission(email)) {
+                // User has already submitted info, proceed directly to download
+                openDownloadModal();
+                return;
+            }
+            
+            // Collect form data
+            const formData = {
+                name: document.getElementById('name').value,
+                email: email,
+                institution: document.getElementById('institution').value,
+                country: document.getElementById('country').value,
+                purpose: document.getElementById('purpose').value,
+                comments: document.getElementById('comments').value,
+                timestamp: new Date().toISOString(),
+                status: 'new'
+            };
+            
+            // Show loading indicator
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('formContainer').style.display = 'none';
+            
+            // Send data to Google Sheets
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                // Store submission data locally as backup
+                let submissions = JSON.parse(localStorage.getItem('researchSubmissions') || '[]');
+                submissions.push(formData);
+                localStorage.setItem('researchSubmissions', JSON.stringify(submissions));
+                
+                // Hide loading indicator and show success
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('formContainer').style.display = 'block';
+                
+                // Show download modal
+                openDownloadModal();
+                
+                // Mark user as having submitted info for this session
+                userSession.hasSubmittedInfo = true;
+                userSession.userData = formData;
+                localStorage.setItem('userSession', JSON.stringify(userSession));
+            })
+            .catch(error => {
+                console.error('Error submitting form:', error);
+                
+                // Fallback: Store data locally if Google Sheets fails
+                let submissions = JSON.parse(localStorage.getItem('researchSubmissions') || '[]');
+                submissions.push(formData);
+                localStorage.setItem('researchSubmissions', JSON.stringify(submissions));
+                
+                // Hide loading indicator and show success
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('formContainer').style.display = 'block';
+                
+                // Show download modal
+                openDownloadModal();
+                
+                // Mark user as having submitted info for this session
+                userSession.hasSubmittedInfo = true;
+                userSession.userData = formData;
+                localStorage.setItem('userSession', JSON.stringify(userSession));
+            });
+        });
+        
+        function openDownloadModal() {
+            document.getElementById('downloadModal').style.display = 'flex';
+        }
+        
+        function closeDownloadModal() {
+            document.getElementById('downloadModal').style.display = 'none';
+        }
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user has a session
+            const savedSession = localStorage.getItem('userSession');
+            if (savedSession) {
+                userSession = JSON.parse(savedSession);
+                
+                // If user has already submitted info, pre-fill the form
+                if (userSession.hasSubmittedInfo && userSession.userData) {
+                    document.getElementById('name').value = userSession.userData.name || '';
+                    document.getElementById('email').value = userSession.userData.email || '';
+                    document.getElementById('institution').value = userSession.userData.institution || '';
+                    document.getElementById('country').value = userSession.userData.country || '';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
