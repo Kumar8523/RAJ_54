@@ -15,11 +15,7 @@ A comprehensive research project developing a systematic engineering framework f
 
 ## Features
 - 🔬 **Research Presentation**: Comprehensive display of systematic paper aircraft engineering research
-- 📊 **Data Collection**: Integrated form system with Google Sheets backend
-- 🎯 **Computer Vision Tracking**: Automated flight trajectory analysis using CSRT algorithm
-- 📱 **Responsive Design**: Mobile-first approach with sidebar navigation
-- 🔄 **Version Control**: Hierarchical data management for design iterations
-- 📈 **Performance Metrics**: Quantitative scoring system (0-10 scale) for aircraft performance
+- 📊 **Data Collection**: Google Sheets
 - 💾 **Offline Capability**: Local storage fallback for form submissions
 - 🎨 **Modern UI**: Clean, professional design with smooth animations
 - 🔗 **Resource Integration**: GitHub repositories, demo videos, and documentation
