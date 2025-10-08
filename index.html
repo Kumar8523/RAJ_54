@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAJ_54 - Systematic Paper Aircraft Engineering Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e40af;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(30, 64, 175, 0.95);
+            clip-path: circle(0% at 50px 50px);
+            transition: clip-path 0.8s cubic-bezier(0.86, 0, 0.07, 1);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .nav-overlay.active {
+            clip-path: circle(150% at 50px 50px);
+        }
+        
+        .nav-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            z-index: 101;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .nav-toggle span {
+            position: absolute;
+            height: 3px;
+            width: 24px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-toggle span:nth-child(1) {
+            transform: translateY(-8px);
+        }
+        
+        .nav-toggle span:nth-child(3) {
+            transform: translateY(8px);
+        }
+        
+        .nav-toggle.active span:nth-child(1) {
+            transform: translateY(0) rotate(45deg);
+        }
+        
+        .nav-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .nav-toggle.active span:nth-child(3) {
+            transform: translateY(0) rotate(-45deg);
+        }
+        
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            position: relative;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+            transform: translateY(-5px);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.05"><path d="M500,250c138.07,0,250,111.93,250,250S638.07,750,500,750S250,638.07,250,500S361.93,250,500,250z M500,200c-165.69,0-300,134.31-300,300s134.31,300,300,300s300-134.31,300-300S665.69,200,500,200L500,200z"/></svg>');
+            background-size: 300px;
+        }
+        
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .download-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .download-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .download-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .download-modal.active .download-content {
+            transform: scale(1);
+        }
+        
+        .researcher-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer-bg {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        }
+        
+        .footer-wave {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+        
+        .footer-wave svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 50px;
+        }
+        
+        .footer-wave .shape-fill {
+            fill: #FFFFFF;
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translate(0, 0px); }
+            50% { transform: translate(0, 15px); }
+            100% { transform: translate(0, -0px); }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Navigation Overlay -->
+    <div class="nav-overlay" id="navOverlay">
+        <div class="nav-links">
+            <a href="#home" class="nav-link">Home</a>
+            <a href="#team" class="nav-link">Research Team</a>
+            <a href="#abstract" class="nav-link">Abstract</a>
+            <a href="#methodology" class="nav-link">Methodology</a>
+            <a href="#results" class="nav-link">Results</a>
+            <a href="#conclusion" class="nav-link">Conclusion</a>
+            <a href="#future" class="nav-link">Future Work</a>
+            <a href="#downloads" class="nav-link">Downloads</a>
+        </div>
+    </div>
+    
+    <!-- Navigation Toggle -->
+    <div class="nav-toggle" id="navToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-bg text-white pt-20 pb-16 relative">
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 fade-in">Systematic Engineering Framework for Paper Aircraft</h1>
+                <p class="text-xl md:text-2xl mb-8 fade-in">Exploring Trade-Offs and Potentials for Micro-UAV Development</p>
+                <div class="flex flex-wrap justify-center gap-4 fade-in">
+                    <a href="#downloads" class="bg-white text-blue-700 px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition shadow-lg">Download Resources</a>
+                    <a href="#abstract" class="bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-blue-700 transition">Learn More</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Floating elements -->
+        <div class="absolute top-1/4 right-10 floating opacity-20">
+            <i class="fas fa-paper-plane text-6xl text-white"></i>
+        </div>
+        <div class="absolute bottom-1/4 left-10 floating opacity-20" style="animation-delay: 1.5s;">
+            <i class="fas fa-plane text-5xl text-white"></i>
+        </div>
+    </section>
+
+    <!-- Research Team Section -->
+    <section id="team" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-4 gradient-text">Research Team</h2>
+            <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">Meet the talented 9th grade researchers from Rajshahi University School and College</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-gray-50 p-6 rounded-xl text-center card-hover fade-in">
+                    <div class="flex justify-center mb-4">
+                        <img src="./images/researcher1.jpg" alt="Samiul Muztaba" class="researcher-img" onerror="this.src='data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22 viewBox=%220 0 150 150%22><rect width=%22150%22 height=%22150%22 fill=%22%231e40af%22/><text x=%2275%22 y=%2285%22 font-family=%22Arial%22 font-size=%2220%22 text-anchor=%22middle%22 fill=%22white%22>S.M.</text></svg>'">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Samiul Muztaba</h3>
+                    <p class="text-gray-600 mb-3">Lead Developer & Researcher</p>
+                    <div class="flex justify-center space-x-3 text-blue-600">
+                        <a href="#" class="hover:text-blue-800"><i class="fab fa-github"></i></a>
+                        <a href="#" class="hover:text-blue-800"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-6 rounded-xl text-center card-hover fade-in">
+                    <div class="flex justify-center mb-4">
+                        <img src="./images/researcher2.jpg" alt="Nabo Kumar Sarkar" class="researcher-img" onerror="this.src='data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22 viewBox=%220 0 150 150%22><rect width=%22150%22 height=%22150%22 fill=%22%231e40af%22/><text x=%2275%22 y=%2285%22 font-family=%22Arial%22 font-size=%2220%22 text-anchor=%22middle%22 fill=%22white%22>N.K.S.</text></svg>'">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Nabo Kumar Sarkar</h3>
+                    <p class="text-gray-600 mb-3">Aerodynamics Specialist</p>
+                    <div class="flex justify-center space-x-3 text-blue-600">
+                        <a href="#" class="hover:text-blue-800"><i class="fab fa-github"></i></a>
+                        <a href="#" class="hover:text-blue-800"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-6 rounded-xl text-center card-hover fade-in">
+                    <div class="flex justify-center mb-4">
+                        <img src="./images/researcher3.jpg" alt="Ashfaque Ahmed Saud" class="researcher-img" onerror="this.src='data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22 viewBox=%220 0 150 150%22><rect width=%22150%22 height=%22150%22 fill=%22%231e40af%22/><text x=%2275%22 y=%2285%22 font-family=%22Arial%22 font-size=%2220%22 text-anchor=%22middle%22 fill=%22white%22>A.A.S.</text></svg>'">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Ashfaque Ahmed Saud</h3>
+                    <p class="text-gray-600 mb-3">Testing & Validation Lead</p>
+                    <div class="flex justify-center space-x-3 text-blue-600">
+                        <a href="#" class="hover:text-blue-800"><i class="fab fa-github"></i></a>
+                        <a href="#" class="hover:text-blue-800"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-6 rounded-xl text-center card-hover fade-in">
+                    <div class="flex justify-center mb-4">
+                        <img src="./images/researcher4.jpg" alt="Lam Ayat Sakib" class="researcher-img" onerror="this.src='data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22 viewBox=%220 0 150 150%22><rect width=%22150%22 height=%22150%22 fill=%22%231e40af%22/><text x=%2275%22 y=%2285%22 font-family=%22Arial%22 font-size=%2220%22 text-anchor=%22middle%22 fill=%22white%22>L.A.S.</text></svg>'">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Lam Ayat Sakib</h3>
+                    <p class="text-gray-600 mb-3">Documentation & Analysis</p>
+                    <div class="flex justify-center space-x-3 text-blue-600">
+                        <a href="#" class="hover:text-blue-800"><i class="fab fa-github"></i></a>
+                        <a href="#" class="hover:text-blue-800"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Abstract Section -->
+    <section id="abstract" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 gradient-text">Abstract</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-xl shadow-md fade-in">
+                    <p class="mb-4 text-lg">This research develops and validates a systematic, low-cost engineering framework for optimizing paper aircraft through computer vision flight tracking and iterative design methodology, with demonstrated transferability to micro-UAV development applications.</p>
+                    <p class="mb-4 text-lg">Traditional paper aircraft design relies on inefficient trial-and-error approaches that limit aerodynamic understanding and provide no systematic pathway to micro-UAV engineering skills.</p>
+                    <p class="text-lg">By implementing the Lucidraft software for automated trajectory tracking, quantitative performance measurement, and enforced single-variable modification protocols across multiple aircraft iterations, this framework transforms subjective flight assessment into reproducible engineering data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 gradient-text">Key Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl shadow-sm card-hover fade-in">
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-cogs text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Systematic Approach</h3>
+                    <p class="text-gray-600">Methodical engineering framework with controlled single-variable modifications and reproducible testing protocols.</p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl shadow-sm card-hover fade-in">
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-eye text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Computer Vision Tracking</h3>
+                    <p class="text-gray-600">Automated trajectory analysis using CSRT algorithm for objective performance measurement.</p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl shadow-sm card-hover fade-in">
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-plane text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Micro-UAV Applications</h3>
+                    <p class="text-gray-600">Transferable design principles and skills applicable to professional micro-UAV development.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section id="methodology" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 gradient-text">Methodology</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-12 fade-in">
+                    <h3 class="text-2xl font-bold mb-4 text-blue-700">Framework Requirements</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <ol class="list-decimal pl-6 space-y-3 text-lg">
+                            <li>The framework should have a systematic approach</li>
+                            <li>For every change, results should be quantitatively measurable using objective performance metrics</li>
+                            <li>The framework must be repeatable and reproducible</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="mb-12 fade-in">
+                    <h3 class="text-2xl font-bold mb-4 text-blue-700">Software Infrastructure</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <p class="mb-4 text-lg">Lucidraft is a paper plane engineering software that serves as a digital engineering notebook with enhanced analytical capabilities.</p>
+                        <div class="flex flex-wrap gap-4 mt-6">
+                            <a href="https://github.com/samiulmuztaba/Lucidraft_Delta-X" target="_blank" class="bg-blue-600 text-white px-5 py-3 rounded-lg flex items-center gap-2 shadow-md hover:bg-blue-700 transition">
+                                <i class="fab fa-github"></i> GitHub Repository
+                            </a>
+                            <button class="download-btn bg-green-600 text-white px-5 py-3 rounded-lg flex items-center gap-2 shadow-md hover:bg-green-700 transition" data-resource="software">
+                                <i class="fas fa-download"></i> Download Software
+                            </button>
+                            <a href="https://youtu.be/2WEe5R7OTTw" target="_blank" class="bg-red-600 text-white px-5 py-3 rounded-lg flex items-center gap-2 shadow-md hover:bg-red-700 transition">
+                                <i class="fab fa-youtube"></i> Demo Video
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 gradient-text">Results</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-12 fade-in">
+                    <h3 class="text-2xl font-bold mb-4 text-blue-700">Framework Effectiveness Analysis</h3>
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl shadow-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-lg font-bold mb-2 text-green-600">Systematic Approach Advantages</h4>
+                                <ul class="list-disc pl-6 space-y-2">
+                                    <li>Clear documentation and knowledge building</li>
+                                    <li>Single-variable protocol implementation</li>
+                                    <li>Quantitative performance tracking</li>
+                                    <li>Improved user understanding of aerodynamics</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold mb-2 text-green-600">Validation Outcomes</h4>
+                                <ul class="list-disc pl-6 space-y-2">
+                                    <li>Reproducibility and consistency across users</li>
+                                    <li>Cost-effectiveness with standard materials</li>
+                                    <li>Time efficiency compared to trial-and-error</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Downloads Section -->
+    <section id="downloads" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 gradient-text">Downloads</h2>
+            <div class="max-w-4xl mx-auto">
+                <p class="text-center text-gray-600 mb-8">Access our research paper, software, and additional resources</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-md card-hover fade-in">
+                        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                            <i class="fas fa-file-pdf text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Research Paper</h3>
+                        <p class="text-gray-600 mb-4">Complete research paper detailing our methodology, results, and conclusions.</p>
+                        <button class="download-btn bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition" data-resource="paper">
+                            <i class="fas fa-download"></i> Download PDF
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-md card-hover fade-in">
+                        <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+                            <i class="fas fa-laptop-code text-green-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Lucidraft Software</h3>
+                        <p class="text-gray-600 mb-4">Our custom software for systematic paper aircraft analysis and optimization.</p>
+                        <button class="download-btn bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition" data-resource="software">
+                            <i class="fas fa-download"></i> Download Software
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-md card-hover fade-in">
+                        <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+                            <i class="fas fa-chart-bar text-purple-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Dataset</h3>
+                        <p class="text-gray-600 mb-4">Complete dataset from our experiments for further analysis.</p>
+                        <button class="download-btn bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition" data-resource="dataset">
+                            <i class="fas fa-download"></i> Download Dataset
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-md card-hover fade-in">
+                        <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center mb-4">
+                            <i class="fas fa-images text-yellow-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Presentation Slides</h3>
+                        <p class="text-gray-600 mb-4">Slides from our project presentation with visualizations and key findings.</p>
+                        <button class="download-btn bg-yellow-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-yellow-700 transition" data-resource="slides">
+                            <i class="fas fa-download"></i> Download Slides
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Modal -->
+    <div class="download-modal" id="downloadModal">
+        <div class="download-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold" id="modalTitle">Download Resource</h3>
+                <button class="text-gray-500 hover:text-gray-700 text-xl" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="downloadForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="name">Full Name</label>
+                    <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="institution">Institution/Organization</label>
+                    <input type="text" id="institution" name="institution" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2" for="purpose">Purpose of Download</label>
+                    <select id="purpose" name="purpose" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="research">Research</option>
+                        <option value="education">Education</option>
+                        <option value="personal">Personal Interest</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-between">
+                    <button type="button" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition" id="cancelDownload">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-bg text-white pt-16 pb-8 relative">
+        <div class="footer-wave">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+            </svg>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">RAJ_54</h3>
+                    <p class="text-gray-300 mb-4">A systematic engineering framework for paper aircraft optimization with applications in micro-UAV development.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition"><i class="fab fa-github text-xl"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition"><i class="fab fa-youtube text-xl"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition"><i class="fab fa-twitter text-xl"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-300 hover:text-white transition">Home</a></li>
+                        <li><a href="#abstract" class="text-gray-300 hover:text-white transition">Abstract</a></li>
+                        <li><a href="#methodology" class="text-gray-300 hover:text-white transition">Methodology</a></li>
+                        <li><a href="#results" class="text-gray-300 hover:text-white transition">Results</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#downloads" class="text-gray-300 hover:text-white transition">Downloads</a></li>
+                        <li><a href="https://github.com/samiulmuztaba/Lucidraft_Delta-X" target="_blank" class="text-gray-300 hover:text-white transition">GitHub Repository</a></li>
+                        <li><a href="https://youtu.be/2WEe5R7OTTw" target="_blank" class="text-gray-300 hover:text-white transition">Demo Video</a></li>
+                        <li><a href="#future" class="text-gray-300 hover:text-white transition">Future Work</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-map-marker-alt mt-1 text-gray-300"></i>
+                            <span class="text-gray-300">Rajshahi University School and College</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-envelope mt-1 text-gray-300"></i>
+                            <span class="text-gray-300">research.raj54@example.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 RAJ_54 Research Team. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navigation Toggle
+        const navToggle = document.getElementById('navToggle');
+        const navOverlay = document.getElementById('navOverlay');
+        
+        navToggle.addEventListener('click', () => {
+            navToggle.classList.toggle('active');
+            navOverlay.classList.toggle('active');
+        });
+        
+        // Close navigation when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navToggle.classList.remove('active');
+                navOverlay.classList.remove('active');
+            });
+        });
+        
+        // Download Modal Functionality
+        const downloadModal = document.getElementById('downloadModal');
+        const downloadBtns = document.querySelectorAll('.download-btn');
+        const closeModal = document.getElementById('closeModal');
+        const cancelDownload = document.getElementById('cancelDownload');
+        const downloadForm = document.getElementById('downloadForm');
+        const modalTitle = document.getElementById('modalTitle');
+        
+        let currentResource = '';
+        
+        downloadBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentResource = btn.getAttribute('data-resource');
+                
+                // Set modal title based on resource
+                const resourceNames = {
+                    'paper': 'Research Paper',
+                    'software': 'Lucidraft Software',
+                    'dataset': 'Experimental Dataset',
+                    'slides': 'Presentation Slides'
+                };
+                
+                modalTitle.textContent = `Download ${resourceNames[currentResource]}`;
+                downloadModal.classList.add('active');
+            });
+        });
+        
+        closeModal.addEventListener('click', () => {
+            downloadModal.classList.remove('active');
+        });
+        
+        cancelDownload.addEventListener('click', () => {
+            downloadModal.classList.remove('active');
+        });
+        
+        // Check if user has already submitted info
+        function hasUserInfo() {
+            return localStorage.getItem('userInfoSubmitted') === 'true';
+        }
+        
+        // Handle form submission
+        downloadForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(downloadForm);
+            const userData = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                institution: formData.get('institution'),
+                purpose: formData.get('purpose'),
+                resource: currentResource,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('userInfoSubmitted', 'true');
+            localStorage.setItem('userData', JSON.stringify(userData));
+            
+            // In a real implementation, you would send this data to Google Sheets
+            // For now, we'll just log it and proceed with download
+            console.log('User data for Google Sheets:', userData);
+            
+            // Simulate download
+            alert(`Thank you! Your download for ${currentResource} will begin shortly.`);
+            
+            // Close modal
+            downloadModal.classList.remove('active');
+            
+            // Reset form
+            downloadForm.reset();
+        });
+        
+        // Check if user info exists and skip modal if it does
+        downloadBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (hasUserInfo()) {
+                    e.preventDefault();
+                    // User has already submitted info, proceed directly to download
+                    const resource = btn.getAttribute('data-resource');
+                    alert(`Downloading ${resource}...`);
+                    // In a real implementation, you would trigger the actual download here
+                }
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Fade-in animation on scroll
+        function checkFadeIn() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        // Initial check
+        checkFadeIn();
+
+        // Check on scroll
+        window.addEventListener('scroll', checkFadeIn);
+    </script>
+</body>
+</html>
